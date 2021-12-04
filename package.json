@@ -1,0 +1,56 @@
+{
+  "name": "traffic-lights",
+  "version": "0.0.0-dev",
+  "license": "MIT",
+  "description": "",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "author": "2020",
+  "keywords": [],
+  "scripts": {
+    "test": "npm run eslint && npm run tscheck && npm run test:cov",
+    "test:p": "ultra test",
+    "test:r": "npm run mocha -- src/**/*.spec.ts",
+    "test:cov": "c8 --reporter text --exclude \"**/*.spec.ts\" --exclude \"**/testing/**\"  npm run test:r -- --no-timeouts",
+    "test:w": "npm run test:r -- --watch --watch-files src/**/*.ts",
+    "lint": "npm run eslint && npm run tscheck",
+    "eslint": "node node_modules/eslint/bin/eslint \"src/**/*.{ts,tsx}\"",
+    "eslint:w": "watchexec -w src \"npm run eslint\"",
+    "eslint:fix": "npm run eslint -- --fix",
+    "tscheck": "tsc --noEmit",
+    "tscheck:w": "npm run tscheck -- --watch",
+    "lint:fix": "npm run eslint:fix && npm run lint:doc:fix",
+    "lint:doc": "sh Taskfile remark_run",
+    "lint:doc:fix": "sh Taskfile remark_run --output",
+    "format:src": "prettier src --write",
+    "commit_lint": "sh Taskfile commit_lint",
+    "commit": "cz",
+    "semantic-release": "semantic-release",
+    "dev": "node node_modules/webpack-dev-server/bin/webpack-dev-server",
+    "build": "sh Taskfile build",
+    "bundle": "sh Taskfile bundle",
+    "lint:w": "run-p tscheck:w eslint:w",
+    "test:m": "node node_modules/@stryker-mutator/core/bin/stryker run",
+    "mocha": "node -r @swc/register node_modules/mocha/bin/_mocha",
+    "test:d": "ndb -r @swc/register node_modules/mocha/bin/_mocha --no-timeouts --watch-files src/**/*.ts --watch src/**/*.spec.ts"
+  },
+  "ultra": {
+    "concurrent": [
+      "lint",
+      "test"
+    ]
+  },
+  "config": {
+    "ghooks": {
+      "pre-commit": "precise-commits",
+      "commit-msg": "sh Taskfile commit_lint",
+      "pre-push": "ultra test"
+    }
+  },
+  "devDependencies": {
+    "prettier": "^2.5.0",
+    "ts-node": "^10.4.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.2"
+  }
+}
